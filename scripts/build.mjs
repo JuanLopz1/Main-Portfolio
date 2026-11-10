@@ -17,6 +17,11 @@ if (existingOutput) {
 }
 await mkdir(output);
 await cp(join(root, 'public'), output, { recursive: true });
+const pythonAssets = join(output, 'assets', 'pyodide');
+await mkdir(pythonAssets, { recursive: true });
+for (const file of ['pyodide.mjs', 'pyodide.asm.mjs', 'pyodide.asm.wasm', 'pyodide-lock.json', 'python_stdlib.zip']) {
+  await cp(join(root, 'node_modules', 'pyodide', file), join(pythonAssets, file));
+}
 
 const files = [
   ['/', home()],

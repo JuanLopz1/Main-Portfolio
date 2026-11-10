@@ -23,7 +23,7 @@ progress::-moz-progress-bar { background: #92672b; }
 .filter-label { display: grid; gap: .2rem; font-size: .87rem; color: var(--muted); }
 .filter-label select { min-height: 2.6rem; padding: .34rem .7rem; border-radius: .38rem; border: 1px solid #a49f94; color: var(--ink); background: var(--surface); }
 .filter-label select:disabled { color: #686a70; background: #efede7; }
-.result-stats { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: .6rem; margin: .9rem 0; }
+.result-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: .6rem; margin: .9rem 0; }
 .stat { padding: .65rem .75rem; border-radius: .42rem; border: 1px solid #e2dbcd; background: #f4f0e6; }
 .stat dt { font-size: .9rem; color: #524838; }
 .stat dd { font-size: clamp(1.5rem,3vw,2.15rem); font-weight: 720; line-height: 1.13; font-variant-numeric: tabular-nums; }
@@ -37,6 +37,8 @@ progress::-moz-progress-bar { background: #92672b; }
 .result-1 { color: #74481a; }
 .result-2 { color: #5a427e; }
 .result-3 { color: #922f2b; }
+.result-4 { color: #74481a; }
+.result-5 { color: #5a427e; }
 
 .booking-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .85rem; }
 .booking-form > div { display: grid; gap: .3rem; }

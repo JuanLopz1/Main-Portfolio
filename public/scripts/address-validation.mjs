@@ -1,8 +1,18 @@
 export const columns = ['record_id', 'street', 'locality', 'region', 'postal_code'];
 export const statuses = ['Ready', 'Missing fields', 'Duplicate', 'Invalid format'];
+export const reviewStatuses = [...statuses, 'Needs Review', 'Special Case'];
 export const maxRows = 5000;
 export const maxBytes = 1024 * 1024;
 const regions = new Set(['NORTH', 'SOUTH', 'WEST']);
+const provinces = new Set(['AB', 'BC', 'MB', 'NB', 'NL', 'NS', 'NT', 'NU', 'ON', 'PE', 'QC', 'SK', 'YT']);
+const canadianPostal = /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTVWXYZ][ -]?\d[ABCEGHJ-NPRSTVWXYZ]\d$/i;
+
+function hasSupportedPostal(region, postal) {
+  const code = region.toUpperCase();
+  if (regions.has(code)) return /^DEMO-\d{3}$/i.test(postal);
+  if (provinces.has(code)) return canadianPostal.test(postal);
+  return /^[A-Z]{2,3}$/.test(code) && /^[A-Z\d][A-Z\d -]{2,11}$/i.test(postal);
+}
 
 export function readCsv(text) {
   const records = [];
@@ -73,8 +83,11 @@ export function makeValidator() {
     if (missing.length) return result('Missing fields', `Missing ${missing.join(', ')}`);
 
     const [id, street, locality, region, postalCode] = fields;
-    if (!regions.has(region.toUpperCase()) || !/^DEMO-\d{3}$/i.test(postalCode)) {
-      return result('Invalid format', 'Expected a demo region and DEMO-### code');
+    if (fields.some(value => value.length > 512)) {
+      return result('Invalid format', 'Fields are limited to 512 characters');
+    }
+    if (!hasSupportedPostal(region, postalCode)) {
+      return result('Invalid format', 'Postal code does not match the supplied region');
     }
 
     const normalizedId = id.toLowerCase();
@@ -93,8 +106,10 @@ function csvCell(value) {
 }
 
 export function makeReport(results) {
-  const lines = [['row_number', ...columns, 'status', 'detail']];
-  for (const { number, fields, status, detail } of results) lines.push([number, ...fields, status, detail]);
+  const lines = [['row_number', ...columns, 'normalized_street', 'address_kind', 'address_region', 'status', 'detail']];
+  for (const { number, fields, review, status, detail } of results) {
+    lines.push([number, ...fields, review?.normalized ?? '', review?.kind ?? '', review?.region ?? '', status, detail]);
+  }
   return lines.map(line => line.map(csvCell).join(',')).join('\r\n') + '\r\n';
 }
 
@@ -103,8 +118,9 @@ export function sampleCsv() {
   for (let number = 1; number <= 96; number += 1) {
     const duplicate = number % 13 === 4;
     const addressNumber = duplicate ? number - 1 : number;
+    const examples = { 6: 'PO Box 70 STN Demo', 7: '42 Example Road RR 3', 8: '5-100 Example Avenue', 9: 'Example Avenue' };
     lines.push([
-      `S-${String(number).padStart(3, '0')}`, `${addressNumber} Example Avenue`,
+      `S-${String(number).padStart(3, '0')}`, examples[addressNumber] ?? `${addressNumber} Example Avenue`,
       number % 11 === 2 ? '' : 'Sample City', 'NORTH',
       number % 17 === 5 ? 'DEMO-XX' : `DEMO-${String(addressNumber).padStart(3, '0')}`,
     ]);

@@ -1,5 +1,5 @@
 import { projects, site } from '../content/projects.mjs';
-import { columns, statuses } from '../public/scripts/address-validation.mjs';
+import { columns, reviewStatuses as statuses } from '../public/scripts/address-validation.mjs';
 
 export const escape = value => String(value).replace(/[&<>"']/g, character => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
@@ -110,7 +110,7 @@ export function home() {
             <div class="frame-top"><span>${icon('table')}Address Migration Toolkit</span><span class="frame-tag">Synthetic demo</span></div>
             ${image(amt.image, true)}
           </div>
-          <figcaption class="hero-caption"><span>Sample CSV · Local validation · Report export</span>${link(amt.demo.href, 'Try the demo')}</figcaption>
+          <figcaption class="hero-caption"><span>Sample CSV · Original Python rules · Report export</span>${link(amt.demo.href, 'Try the demo')}</figcaption>
         </figure>
       </div>
     </section>
@@ -156,7 +156,8 @@ export function detail(project) {
     <div class="section wrap detail-layout">
       <div class="detail-content">
         <section><h2>The problem</h2><p>${escape(project.problem)}</p></section>
-        <section><h2>My contribution</h2><p>${escape(project.contribution)}</p></section>
+        <section><h2>${escape(project.creditTitle ?? 'What I built')}</h2><p>${escape(project.contribution)}</p></section>
+        ${project.workflow ? `<section><h2>How it works</h2><p>${escape(project.workflow)}</p></section>` : ''}
         <section><h2>What it does</h2><ul>${project.features.map(feature => `<li>${escape(feature)}</li>`).join('')}</ul></section>
         ${gallery.map(shot => `<figure class="detail-shot">${image(shot)}${shot.caption ? `<figcaption>${escape(shot.caption)}</figcaption>` : ''}</figure>`).join('')}
         <section><h2>Result and lessons</h2><p>${escape(project.outcome)}</p></section>
@@ -172,16 +173,16 @@ export function demo() {
   return page({ title: 'Address Migration Toolkit Demo | Juan López', description: 'Try local CSV validation, duplicate detection and report export on synthetic address records.', path: '/demos/address-migration/', stylesheet: 'demo.css', script: 'address-demo.mjs', body: `
     <section class="demo-heading dark" aria-labelledby="demo-title"><div class="wrap">
       ${link('/projects/address-migration-toolkit/', 'Project case study', 'left', 'back-link')}
-      ${kicker('Browser demo / Synthetic data')}
+      ${kicker('Cedar Vale Cooperative / Fictional data')}
       <h1 id="demo-title">Address Migration Toolkit</h1>
-      <p>Check a sample CSV for missing fields, duplicates, and formatting issues. The browser applies local rules to fictional addresses.</p>
+      <p>Parse and review fictional addresses with the Python rules from the original toolkit. The file stays in your browser.</p>
     </div></section>
     <div class="wrap demo-shell">
       <section class="demo-panel controls-panel" aria-labelledby="input-title">
         <div class="panel-heading"><div><h2 id="input-title">1. Load a CSV</h2><p id="input-summary">No CSV loaded</p></div><button class="button button-quiet" type="button" id="reset-demo" disabled>Reset</button></div>
         <div class="actions"><button class="button button-outline" type="button" id="load-sample">Load sample CSV</button><button class="button button-outline" type="button" id="choose-file" aria-describedby="file-guidance">Choose CSV</button><input type="file" id="csv-file" accept=".csv,text/csv" hidden></div>
         <p class="file-guidance" id="file-guidance">Use synthetic records only. Up to 1 MB or 5,000 rows. Files stay in this browser tab.</p>
-        <details class="csv-format"><summary>Required CSV format</summary><p>Use the header <code>${columns.join(', ')}</code>. Use <code>NORTH</code>, <code>SOUTH</code>, or <code>WEST</code> for region and <code>DEMO-###</code> for postal code.</p></details>
+        <details class="csv-format"><summary>Required CSV format</summary><p>Use the header <code>${columns.join(', ')}</code>. The sample uses <code>NORTH</code>, <code>SOUTH</code>, or <code>WEST</code> with <code>DEMO-###</code> postal codes. You can also enter region and postal formats with invented addresses.</p></details>
         <p id="demo-error" class="demo-error" role="alert" hidden></p>
       </section>
       <section class="demo-panel controls-panel" aria-labelledby="check-title">
@@ -194,7 +195,7 @@ export function demo() {
         <div class="panel-heading result-heading"><div><h2 id="results-title">3. Review results</h2><p id="result-count">Preview</p></div><label class="filter-label" for="result-filter">Result status<select id="result-filter" disabled><option value="">All statuses</option>${statuses.map(status => `<option>${escape(status)}</option>`).join('')}</select></label></div>
         <dl class="result-stats">${statuses.map((status, index) => `<div class="stat stat-${index}"><dt>${escape(status)}</dt><dd data-result-status="${escape(status)}">0</dd></div>`).join('')}</dl>
         <div class="table-wrap" tabindex="0" role="region" aria-label="Validation results preview">
-          <table><caption class="sr-only">First eight records matching the selected status</caption><thead><tr><th scope="col">Record ID</th><th scope="col">Street</th><th scope="col">Status</th><th scope="col">Detail</th></tr></thead><tbody id="result-rows"><tr><td colspan="4">Results will appear here after validation.</td></tr></tbody></table>
+          <table><caption class="sr-only">First eight records matching the selected status</caption><thead><tr><th scope="col">Record ID</th><th scope="col">Input street</th><th scope="col">Parsed address</th><th scope="col">Status</th><th scope="col">Detail</th></tr></thead><tbody id="result-rows"><tr><td colspan="5">Results will appear here after validation.</td></tr></tbody></table>
         </div>
       </section>
     </div>` });

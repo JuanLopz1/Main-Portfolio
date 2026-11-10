@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Delivery Cat | Play Lab 1B</title>
+  <link rel="icon" href="assets/courier.webp" type="image/webp">
+  <link rel="stylesheet" href="game.css">
+  <script type="module" src="/scripts/project-navigation.mjs"></script>
+  <script type="module" src="game.js"></script>
+</head>
+<body>
+  <main id="game" class="game" data-phase="menu" data-paused="false">
+    <header class="game-header">
+      <div>
+        <a class="project-link back-link" href="/projects/delivery-cat/">← Back to project</a>
+        <h1>Delivery Cat</h1>
+        <p>Pick up one item, cross the road, and deliver it to the right cat.</p>
+      </div>
+      <button id="sound" class="quiet" type="button" aria-pressed="false">Sound off</button>
+    </header>
+
+    <dl class="hud" aria-label="Game status">
+      <div><dt>Level</dt><dd id="level">1 / 4</dd></div>
+      <div><dt>Score</dt><dd id="score" aria-live="polite">0</dd></div>
+      <div><dt>Cats served</dt><dd id="served">0 / 3</dd></div>
+      <div><dt>Lives</dt><dd id="lives">3</dd></div>
+      <div><dt>Carrying</dt><dd id="carrying">Nothing</dd></div>
+      <div><dt>Time</dt><dd id="clock">00:00</dd></div>
+      <div><dt>Time bonus</dt><dd id="bonus">+180</dd></div>
+    </dl>
+
+    <section id="field" class="field" tabindex="0" aria-label="Delivery Cat playfield" aria-describedby="controls-help">
+      <img class="city" src="assets/city.webp" alt="" draggable="false">
+      <video id="city-video" class="city" preload="none" muted loop playsinline hidden aria-hidden="true"></video>
+      <div id="actors" class="actors" aria-hidden="true"></div>
+      <div id="party" class="party" hidden aria-hidden="true"></div>
+      <div id="overlay" class="overlay">
+        <section class="notice" aria-labelledby="screen-title">
+          <h2 id="screen-title">Ready for the night shift?</h2>
+          <p id="screen-copy">Four levels of orders, shortcuts, and traffic.</p>
+          <div id="screen-details"></div>
+          <div id="screen-actions" class="notice-actions">
+            <button class="primary" type="button" data-action="start">Start delivery</button>
+            <button type="button" data-action="help">How to play</button>
+            <button type="button" data-action="scores">High scores</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <div id="finish-area" class="finish-area" hidden>
+      <p id="route-hint"></p>
+      <button class="primary" type="button" data-action="finish">Finish game</button>
+    </div>
+
+    <footer class="control-deck">
+      <div class="game-actions">
+        <button id="pause" type="button" disabled>Pause</button>
+        <button id="restart" type="button" disabled>Restart</button>
+        <p id="controls-help">Move with arrow keys or the directional buttons.</p>
+      </div>
+      <div class="directions" role="group" aria-label="Directional controls">
+        <button type="button" data-direction="0" class="move up" aria-label="Move up" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+        <button type="button" data-direction="2" class="move left" aria-label="Move left" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+        <button type="button" data-direction="1" class="move down" aria-label="Move down" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+        <button type="button" data-direction="3" class="move right" aria-label="Move right" disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+      </div>
+    </footer>
+    <p id="announcements" class="sr-only" aria-live="polite"></p>
+  </main>
+</body>
+</html>

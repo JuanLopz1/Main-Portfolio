@@ -1,10 +1,11 @@
 # Juan López · Portfolio
 
-Static portfolio for [juanlopez.ca](https://juanlopez.ca). The build generates HTML and ships self-hosted fonts, CSS, screenshots, videos, and browser demos. Node 22 or later is required. There are no package dependencies or environment variables.
+Static portfolio for [juanlopez.ca](https://juanlopez.ca). The build generates HTML and ships self-hosted fonts, CSS, screenshots, videos, and browser demos. Node 22 or later is required. The AMT browser demo uses the pinned Pyodide runtime. There are no environment variables.
 
 ## Run locally
 
 ```sh
+npm ci
 npm test
 npm run build
 npm start
@@ -20,11 +21,11 @@ Open `http://127.0.0.1:4173/`. The build regenerates `dist/`. Run it again after
 - Set `demo` for a verified interactive demo or live site. Set `media` for a playable MP4 with a WebP poster, dimensions, and a caption that describes the actions shown.
 - The share card lives at `public/assets/share.jpg`. Keep it at 1200 × 630 pixels if replacing it. The canonical and sitemap URLs come from the site metadata.
 
-The hero screenshot shows the independent Address Migration Toolkit demo with generated data. The Juan Bot screenshot is from the public chat's idle state. The CoTas screenshots show a private local build populated with fictional records and sample artwork. The Delivery Cat video shows native gameplay with replacement sprite art in the recording. The ChooseAI video shows the Swing desktop interface with its bundled sample catalog. Client source, database files, accounts, and unpublished client media belong outside this repository.
+The hero screenshot shows the Address Migration Toolkit running the supplied Python parser and review rules on generated records. The Juan Bot screenshot is from the public chat's idle state. The CoTas screenshots show an isolated build populated with fictional records and sample artwork. The Delivery Cat video shows native gameplay with replacement sprite art in the recording. The playable edition uses the original C# game rules through WebAssembly. The ChooseAI video shows the Swing desktop interface with its bundled sample catalog. Client database files, accounts, and unpublished client media belong outside this repository.
 
 ## Address Migration Toolkit demo
 
-Open `/demos/address-migration/`, load the sample or choose a synthetic CSV, run validation, and download the report. Use the format shown on the demo page. The input and output stay in tab memory. Reload or use Reset to clear the session. The demo accepts files up to 1 MB and 5,000 rows. It checks a deliberately fictional format, detects duplicate IDs and addresses, and escapes spreadsheet formulas in report cells.
+Open `/demos/address-migration/`, load the sample or choose a synthetic CSV, run validation, and download the report. The original street parser and review rules run in a local Python worker. Use the format shown on the demo page. The input and output stay in tab memory. Reload or use Reset to clear the session. The demo accepts files up to 1 MB and 5,000 rows, detects duplicate IDs and addresses, and escapes spreadsheet formulas in report cells.
 
 ## Movement Unlimited scheduling demo
 
