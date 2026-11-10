@@ -22,8 +22,11 @@ export function icon(name) {
 const detailUrl = project => `/projects/${project.slug}/`;
 const tags = list => `<ul class="tags" aria-label="Technologies">${list.map(text => `<li>${escape(text)}</li>`).join('')}</ul>`;
 const kicker = text => `<p class="kicker"><span class="marker" aria-hidden="true"></span>${escape(text)}</p>`;
-const button = (href, label, kind, glyph, id) => `<a ${id ? `id="${escape(id)}" ` : ''}class="button button-${kind}" href="${escape(href)}">${escape(label)}${glyph ? icon(glyph) : ''}</a>`;
-const link = (href, label, glyph = 'right', extra = '') => `<a class="text-link ${extra}" href="${escape(href)}">${glyph === 'left' ? icon(glyph) : ''}${escape(label)}${glyph !== 'left' ? icon(glyph) : ''}</a>`;
+const linkDestination = (href, newTab) => `href="${escape(href)}"${newTab ? ' target="_blank" rel="noopener"' : ''}`;
+const linkLabel = (label, newTab) => `${escape(label)}${newTab ? '<span class="sr-only"> (opens in a new tab)</span>' : ''}`;
+const button = (href, label, kind, glyph, { id, newTab } = {}) => `<a ${id ? `id="${escape(id)}" ` : ''}class="button button-${kind}" ${linkDestination(href, newTab)}>${linkLabel(label, newTab)}${glyph ? icon(glyph) : ''}</a>`;
+const link = (href, label, glyph = 'right', extra = '', newTab = false) => `<a class="text-link ${extra}" ${linkDestination(href, newTab)}>${glyph === 'left' ? icon(glyph) : ''}${linkLabel(label, newTab)}${glyph !== 'left' ? icon(glyph) : ''}</a>`;
+const demoLink = (href, label) => link(href, label, 'external', '', true);
 const image = (shot, eager = false) => `<img src="/assets/${escape(shot.src)}" width="${shot.width}" height="${shot.height}" alt="${escape(shot.alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'}>`;
 
 function nav() {
@@ -84,7 +87,7 @@ function card(project) {
       <h3>${escape(project.title)}</h3>
       <p>${escape(project.summary)}</p>
       ${tags(project.stack)}
-      <div class="actions">${projectLink}${project.demo ? link(project.demo.href, project.demo.label, 'external') : ''}</div>
+      <div class="actions">${projectLink}${project.demo ? demoLink(project.demo.href, project.demo.label) : ''}</div>
     </div>
   </article>`;
 }
@@ -102,7 +105,7 @@ export function home() {
           <div class="actions">
             ${button('#projects', 'Explore projects', 'primary', 'down')}
             ${button(site.resume, 'View résumé', 'outline', 'external')}
-            ${button(site.bot, 'Talk to Juan Bot', 'quiet', 'external')}
+            ${button(site.bot, 'Talk to Juan Bot', 'quiet', 'external', { newTab: true })}
           </div>
         </div>
         <figure class="hero-visual">
@@ -110,7 +113,7 @@ export function home() {
             <div class="frame-top"><span>${icon('table')}Address Migration Toolkit</span><span class="frame-tag">Synthetic demo</span></div>
             ${image(amt.image, true)}
           </div>
-          <figcaption class="hero-caption"><span>Sample CSV · Original Python rules · Report export</span>${link(amt.demo.href, 'Try the demo')}</figcaption>
+          <figcaption class="hero-caption"><span>Sample CSV · Original Python rules · Report export</span>${demoLink(amt.demo.href, 'Try the demo')}</figcaption>
         </figure>
       </div>
     </section>
@@ -133,12 +136,12 @@ export function home() {
     </section>
     <section id="contact" class="section contact dark" aria-labelledby="contact-title">
       <div class="wrap contact-grid"><div>${kicker('Contact')}<h2 id="contact-title">Get in touch.</h2><p>For questions about my work, projects, or opportunities.</p></div>
-      <div class="actions">${button(`mailto:${site.email}`, site.email, 'primary', 'mail')}${button(site.linkedin, 'LinkedIn', 'outline', 'external')}${button(site.bot, 'Juan Bot', 'quiet', 'external')}</div></div>
+      <div class="actions">${button(`mailto:${site.email}`, site.email, 'primary', 'mail')}${button(site.linkedin, 'LinkedIn', 'outline', 'external')}${button(site.bot, 'Juan Bot', 'quiet', 'external', { newTab: true })}</div></div>
     </section>` });
 }
 
 export function detail(project) {
-  const action = project.demo ? button(project.demo.href, project.demo.label, 'primary', project.demo.href.startsWith('/') ? 'right' : 'external', 'project-action') : '';
+  const action = project.demo ? button(project.demo.href, project.demo.label, 'primary', 'external', { id: 'project-action', newTab: true }) : '';
   const watch = project.media ? button('#project-demo', project.media.label, action ? 'outline' : 'primary', 'down') : '';
   const gallery = [project.media ? null : project.image, ...(project.gallery ?? [])].filter(Boolean);
   return page({ title: `${project.title} | Juan López`, description: project.summary, path: detailUrl(project), body: `
@@ -164,7 +167,7 @@ export function detail(project) {
       </div>
       <aside class="detail-aside" aria-label="Project facts">
         <section><h2>Stack</h2>${tags(project.stack)}</section>
-        <section><h2>${escape(project.status)}</h2><p>${escape(project.instructions)}</p>${project.demo ? link(project.demo.href, project.demo.label, project.demo.href.startsWith('/') ? 'right' : 'external') : ''}</section>
+        <section><h2>${escape(project.status)}</h2><p>${escape(project.instructions)}</p>${project.demo ? demoLink(project.demo.href, project.demo.label) : ''}</section>
       </aside>
     </div>` });
 }
