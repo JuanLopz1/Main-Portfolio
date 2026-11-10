@@ -22,7 +22,7 @@ export function icon(name) {
 const detailUrl = project => `/projects/${project.slug}/`;
 const tags = list => `<ul class="tags" aria-label="Technologies">${list.map(text => `<li>${escape(text)}</li>`).join('')}</ul>`;
 const kicker = text => `<p class="kicker"><span class="marker" aria-hidden="true"></span>${escape(text)}</p>`;
-const button = (href, label, kind, glyph) => `<a class="button button-${kind}" href="${escape(href)}">${escape(label)}${glyph ? icon(glyph) : ''}</a>`;
+const button = (href, label, kind, glyph, id) => `<a ${id ? `id="${escape(id)}" ` : ''}class="button button-${kind}" href="${escape(href)}">${escape(label)}${glyph ? icon(glyph) : ''}</a>`;
 const link = (href, label, glyph = 'right', extra = '') => `<a class="text-link ${extra}" href="${escape(href)}">${glyph === 'left' ? icon(glyph) : ''}${escape(label)}${glyph !== 'left' ? icon(glyph) : ''}</a>`;
 const image = (shot, eager = false) => `<img src="/assets/${escape(shot.src)}" width="${shot.width}" height="${shot.height}" alt="${escape(shot.alt)}" ${eager ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'}>`;
 
@@ -63,6 +63,7 @@ export function page({ title, description, path, body, stylesheet, script, noind
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Juan López, software, data and automation. Portfolio of projects from Ontario, Canada.">
   <meta name="twitter:card" content="summary_large_image">
+  <script type="module" src="/scripts/project-navigation.mjs"></script>
   ${script ? `<script type="module" src="/scripts/${script}"></script>` : ''}
 </head>
 <body>
@@ -75,7 +76,7 @@ export function page({ title, description, path, body, stylesheet, script, noind
 }
 
 function card(project) {
-  const projectLink = `<a class="text-link" href="${detailUrl(project)}" aria-label="Case study: ${escape(project.title)}">Case study${icon('right')}</a>`;
+  const projectLink = `<a id="featured-${project.slug}" class="text-link" href="${detailUrl(project)}" aria-label="Case study: ${escape(project.title)}">Case study${icon('right')}</a>`;
   return `<article class="project-card">
     <div class="project-shot">${image(project.image)}</div>
     <div class="card-content">
@@ -119,7 +120,7 @@ export function home() {
     </section>
     <section class="section project-index wrap" aria-labelledby="index-title">
       <div class="section-title"><div>${kicker('Browse the work')}<h2 id="index-title">Project index</h2></div></div>
-      <ul class="index-list">${projects.map(project => `<li><a class="index-link" href="${detailUrl(project)}">
+      <ul class="index-list">${projects.map(project => `<li><a id="project-${project.slug}" class="index-link" href="${detailUrl(project)}">
         <span><span class="index-title">${escape(project.title)}</span><span class="index-area">${escape(project.area)}</span></span>
         <span class="index-status">${escape(project.status)}</span>${icon('right')}
       </a></li>`).join('')}</ul>
@@ -137,23 +138,27 @@ export function home() {
 }
 
 export function detail(project) {
-  const action = project.demo ? button(project.demo.href, project.demo.label, 'primary', project.demo.href.startsWith('/') ? 'right' : 'external') : '';
-  const gallery = [project.image, ...(project.gallery ?? [])].filter(Boolean);
+  const action = project.demo ? button(project.demo.href, project.demo.label, 'primary', project.demo.href.startsWith('/') ? 'right' : 'external', 'project-action') : '';
+  const watch = project.media ? button('#project-demo', project.media.label, action ? 'outline' : 'primary', 'down') : '';
+  const gallery = [project.media ? null : project.image, ...(project.gallery ?? [])].filter(Boolean);
   return page({ title: `${project.title} | Juan López`, description: project.summary, path: detailUrl(project), body: `
     <section class="project-hero dark" aria-labelledby="project-title"><div class="wrap">
-      ${link('/#projects', 'All projects', 'left', 'back-link')}
+      ${link(`/#project-${project.slug}`, 'Back to projects', 'left', 'back-link')}
       ${kicker(project.context)}
       <h1 id="project-title">${escape(project.title)}</h1>
       <p class="lede">${escape(project.summary)}</p>
-      ${action ? `<div class="actions">${action}</div>` : ''}
+      ${action || watch ? `<div class="actions">${action}${watch}</div>` : ''}
     </div></section>
+    ${project.media ? `<section class="wrap project-demo" id="project-demo" tabindex="-1" aria-labelledby="project-demo-title">
+      <h2 id="project-demo-title">${escape(project.media.heading)}</h2>
+      <figure class="detail-shot"><video controls playsinline preload="none" width="${project.media.width}" height="${project.media.height}" poster="/assets/${escape(project.image.src)}" aria-labelledby="project-demo-title" aria-describedby="demo-caption"><source src="/assets/${escape(project.media.src)}" type="video/mp4"></video><figcaption id="demo-caption">${escape(project.media.caption)}</figcaption></figure>
+    </section>` : ''}
     <div class="section wrap detail-layout">
       <div class="detail-content">
         <section><h2>The problem</h2><p>${escape(project.problem)}</p></section>
         <section><h2>My contribution</h2><p>${escape(project.contribution)}</p></section>
         <section><h2>What it does</h2><ul>${project.features.map(feature => `<li>${escape(feature)}</li>`).join('')}</ul></section>
         ${gallery.map(shot => `<figure class="detail-shot">${image(shot)}${shot.caption ? `<figcaption>${escape(shot.caption)}</figcaption>` : ''}</figure>`).join('')}
-        ${project.media ? `<figure class="detail-shot"><video controls preload="metadata" width="${project.media.width}" height="${project.media.height}" poster="/assets/${escape(project.image.src)}" aria-label="${escape(project.media.caption)}"><source src="/assets/${escape(project.media.src)}" type="video/mp4"></video><figcaption>${escape(project.media.caption)}</figcaption></figure>` : ''}
         <section><h2>Result and lessons</h2><p>${escape(project.outcome)}</p></section>
       </div>
       <aside class="detail-aside" aria-label="Project facts">
@@ -166,7 +171,7 @@ export function detail(project) {
 export function demo() {
   return page({ title: 'Address Migration Toolkit Demo | Juan López', description: 'Try local CSV validation, duplicate detection and report export on synthetic address records.', path: '/demos/address-migration/', stylesheet: 'demo.css', script: 'address-demo.mjs', body: `
     <section class="demo-heading dark" aria-labelledby="demo-title"><div class="wrap">
-      ${link('/projects/address-migration-toolkit/', 'Project case study', 'left')}
+      ${link('/projects/address-migration-toolkit/', 'Project case study', 'left', 'back-link')}
       ${kicker('Browser demo / Synthetic data')}
       <h1 id="demo-title">Address Migration Toolkit</h1>
       <p>Check a sample CSV for missing fields, duplicates, and formatting issues. The browser applies local rules to fictional addresses.</p>
@@ -198,4 +203,33 @@ export function demo() {
 export function notFound() {
   return page({ title: 'Page not found | Juan López', description: 'Return to the portfolio of Juan López.', path: '/404.html', noindex: true, body: `
     <section class="section wrap not-found"><h1>Page not found</h1><p>The page may have moved.</p>${link('/', 'Return to the portfolio', 'left')}</section>` });
+}
+
+export function schedulingDemo() {
+  return page({ title: 'Movement Unlimited Scheduling Demo | Juan López', description: 'Book and cancel fictional sessions in a browser-based scheduling demo.', path: '/demos/movement-unlimited/', stylesheet: 'demo.css', script: 'scheduling-demo.mjs', body: `
+    <section class="demo-heading dark" aria-labelledby="demo-title"><div class="wrap">
+      ${link('/projects/movement-unlimited/', 'Project case study', 'left', 'back-link')}
+      ${kicker('Browser demo / Fictional schedule')}
+      <h1 id="demo-title">Movement Unlimited</h1>
+      <p>Book a session and see it on the schedule. This independent demo uses fictional participants and keeps your changes in this tab.</p>
+    </div></section>
+    <div class="wrap demo-shell schedule-demo">
+      <section class="demo-panel" aria-labelledby="booking-title">
+        <div class="panel-heading"><div><h2 id="booking-title">Book a session</h2><p>Select a participant, a session type, and a time.</p></div></div>
+        <form class="booking-form" id="booking-form">
+          <div><label for="participant">Participant</label><select id="participant" required><option>Alex R.</option><option>Riley M.</option><option>Sam K.</option></select></div>
+          <div><label for="session-type">Session type</label><select id="session-type" required><option>Private session</option><option>Semi-private session</option></select></div>
+          <div><label for="schedule-day">Day</label><select id="schedule-day" required></select></div>
+          <div><label for="schedule-time">Time</label><select id="schedule-time" required></select></div>
+          <button type="submit" class="button button-primary" id="book-session" disabled>Book session${icon('right')}</button>
+        </form>
+        <p id="booking-error" class="demo-error" role="alert" hidden></p>
+        <p id="booking-status" class="schedule-status" role="status"></p>
+        <noscript><p>Enable JavaScript to use the scheduling demo.</p></noscript>
+      </section>
+      <section class="demo-panel" aria-labelledby="schedule-title">
+        <div class="panel-heading"><div><h2 id="schedule-title">Schedule</h2><p id="schedule-label">Sample week</p></div><button type="button" class="button button-outline" id="reset-schedule" disabled>Reset demo</button></div>
+        <ul id="schedule-list" class="schedule-list" aria-label="Sessions for the selected day"></ul>
+      </section>
+    </div>` });
 }

@@ -2,7 +2,7 @@ import { cp, lstat, mkdir, realpath, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { projects, site } from '../content/projects.mjs';
-import { demo, detail, escape, home, notFound } from './templates.mjs';
+import { demo, detail, escape, home, notFound, schedulingDemo } from './templates.mjs';
 
 const root = await realpath(fileURLToPath(new URL('..', import.meta.url)));
 const output = join(root, 'dist');
@@ -22,6 +22,7 @@ const files = [
   ['/', home()],
   ...projects.map(project => [`/projects/${project.slug}/`, detail(project)]),
   ['/demos/address-migration/', demo()],
+  ['/demos/movement-unlimited/', schedulingDemo()],
 ];
 
 for (const [path, html] of files) {

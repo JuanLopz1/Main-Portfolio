@@ -148,6 +148,9 @@ button:disabled, select:disabled { cursor: default; }
 .detail-shot { border: 1px solid var(--line); border-radius: .72rem; overflow: hidden; }
 .detail-shot video { display: block; width: 100%; height: auto; }
 .detail-shot figcaption { padding: .65rem .8rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .91rem; }
+.project-demo { padding-top: clamp(1.5rem, 4vw, 3.2rem); }
+.project-demo h2 { margin-bottom: .75rem; font-size: clamp(1.52rem, 3vw, 2.4rem); }
+.project-demo .detail-shot { width: min(100%, 55rem); background: var(--surface); }
 .detail-aside { display: grid; gap: 1.5rem; padding: 1.32rem; border: 1px solid var(--line); border-radius: .72rem; background: var(--surface); }
 .detail-aside .text-link { margin-top: .35rem; }
 .not-found { min-height: 52vh; }
