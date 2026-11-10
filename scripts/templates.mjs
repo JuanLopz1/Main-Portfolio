@@ -31,7 +31,7 @@ const image = (shot, eager = false) => `<img src="/assets/${escape(shot.src)}" w
 
 function nav() {
   return `<header class="site-header dark"><nav class="wrap site-nav" aria-label="Main">
-    <a class="brand" href="/"><span class="monogram" aria-hidden="true">JL</span><span>Juan López</span></a>
+    <a class="brand" href="/"><img class="monogram" src="/assets/favicon.svg" width="35" height="35" alt=""><span>Juan López</span></a>
     <ul><li><a class="nav-link" href="/#projects">Projects</a></li><li><a class="nav-link" href="/#about">About</a></li><li><a class="nav-link" href="/#contact">Contact</a></li></ul>
   </nav></header>`;
 }
@@ -81,7 +81,7 @@ export function page({ title, description, path, body, stylesheet, script, noind
 function card(project) {
   const projectLink = `<a id="featured-${project.slug}" class="text-link" href="${detailUrl(project)}" aria-label="Case study: ${escape(project.title)}">Case study${icon('right')}</a>`;
   return `<article class="project-card">
-    <div class="project-shot">${image(project.image)}</div>
+    <div class="project-shot">${image(project.cardImage ?? project.image)}</div>
     <div class="card-content">
       <p class="kicker">${escape(project.area)}</p>
       <h3>${escape(project.title)}</h3>
@@ -105,7 +105,7 @@ export function home() {
           <div class="actions">
             ${button('#projects', 'Explore projects', 'primary', 'down')}
             ${button(site.resume, 'View résumé', 'outline', 'external')}
-            ${button(site.bot, 'Talk to Juan Bot', 'quiet', 'external', { newTab: true })}
+            ${button(site.bot, `Talk to ${site.botName}`, 'quiet', 'external', { newTab: true })}
           </div>
         </div>
         <figure class="hero-visual">
@@ -136,7 +136,7 @@ export function home() {
     </section>
     <section id="contact" class="section contact dark" aria-labelledby="contact-title">
       <div class="wrap contact-grid"><div>${kicker('Contact')}<h2 id="contact-title">Get in touch.</h2><p>For questions about my work, projects, or opportunities.</p></div>
-      <div class="actions">${button(`mailto:${site.email}`, site.email, 'primary', 'mail')}${button(site.linkedin, 'LinkedIn', 'outline', 'external')}${button(site.bot, 'Juan Bot', 'quiet', 'external', { newTab: true })}</div></div>
+      <div class="actions">${button(`mailto:${site.email}`, site.email, 'primary', 'mail')}${button(site.linkedin, 'LinkedIn', 'outline', 'external')}${button(site.bot, site.botName, 'quiet', 'external', { newTab: true })}</div></div>
     </section>` });
 }
 
