@@ -66,6 +66,10 @@ export function page({ title, description, path, body, stylesheet, script, noind
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="Juan López, software, data and automation. Portfolio of projects from Ontario, Canada.">
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="${escape(title)}">
+  <meta name="twitter:description" content="${escape(description)}">
+  <meta name="twitter:image" content="${site.url}/assets/share.jpg">
+  ${path === '/' ? `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@type": "ProfilePage", "@id": site.url + "/#profile", url: site.url + "/", mainEntity: { "@type": "Person", "@id": site.url + "/#person", name: "Juan David López Murillo", alternateName: site.name, url: site.url + "/", description: site.description, jobTitle: "IT Coordinator", sameAs: [site.linkedin] } }).replace(/</g, "\\u003c")}</script>` : ''}
   <script type="module" src="/scripts/project-navigation.mjs"></script>
   ${script ? `<script type="module" src="/scripts/${script}"></script>` : ''}
 </head>
@@ -94,7 +98,7 @@ function card(project) {
 
 export function home() {
   const [amt] = projects;
-  return page({ title: site.title, description: site.description, path: '/', body: `
+  return page({ title: "Juan David López Murillo | Software, Data & Automation", description: site.description, path: '/', body: `
     <section class="hero dark" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-copy">
@@ -130,7 +134,7 @@ export function home() {
     </section>
     <section id="about" class="section about" aria-labelledby="about-title">
       <div class="wrap about-grid">
-        <div>${kicker('Background')}<h2 id="about-title">About me</h2><p class="intro">I’m an IT Coordinator at PenFinancial Credit Union in Welland. I support workplace technology and build Python and SQL workflows for data validation, migration, and reporting. I’m also finishing the Computer Programming and Analysis advanced diploma at Niagara College.</p>${link(site.resume, 'See my experience and education', 'external')}</div>
+        <div>${kicker('Background')}<h2 id="about-title">About me</h2><p class="intro">I’m Juan David López Murillo, an IT Coordinator at PenFinancial Credit Union in Welland. I support workplace technology and build Python and SQL workflows for data validation, migration, and reporting. I’m also finishing the Computer Programming and Analysis advanced diploma at Niagara College.</p>${link(site.resume, 'See my experience and education', 'external')}</div>
         <dl class="profile-facts"><div><dt>PenFinancial Credit Union</dt><dd>IT Coordinator · May 2026–Present</dd></div><div><dt>Niagara College</dt><dd>Computer Programming and Analysis · Expected December 2026</dd></div><div><dt>Based in</dt><dd>Ontario, Canada</dd></div></dl>
       </div>
     </section>
