@@ -98,7 +98,7 @@ function card(project) {
 
 export function home() {
   const [amt] = projects;
-  return page({ title: "Juan David López Murillo | Software, Data & Automation", description: site.description, path: '/', body: `
+  return page({ title: "Juan López | Software, Data & Automation in Ontario", description: site.description, path: '/', body: `
     <section class="hero dark" aria-labelledby="hero-title">
       <div class="wrap hero-grid">
         <div class="hero-copy">
